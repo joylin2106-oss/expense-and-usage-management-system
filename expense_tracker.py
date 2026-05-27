@@ -56,9 +56,9 @@ def usage_tracker():
         duration = input("Enter the duration: ").lower().split()     # split () - split the string 
         number = int(duration[0])
         duration_type = duration[1]
-        if duration_type == "days" or type == "day":
+        if duration_type == "days" or duration_type == "day":
             end_date = converted + timedelta(days = number)
-        elif duration_type == "months" or type == "month":
+        elif duration_type == "months" or duration_type == "month":
             new_month =  current_month + number  
             if new_month >12:
                new_month -=  12
@@ -73,16 +73,22 @@ def usage_tracker():
             print("Last day to use!")
         else:
             print("Already Expired!")    
-        
+        duration_str ="".join(duration)
         usage_store ={
            "items": items,
            "item_amount": item_amount,
            "date_opened": date_opened,
-           "duration": duration, 
+           "duration": duration_str, 
            "end_date": end_date
          }
         item_total += item_amount
         essential_list.append(usage_store)
+        cursor.execute("INSERT INTO usage_tracker(prod_name,prod_amount,date_opened,end_date,duration) VALUES(%s,%s,%s,%s,%s)",(items,item_amount,date_opened,end_date,duration_str))
+        connection.commit()
+        cursor.execute("SELECT*FROM usage_tracker")
+        records = cursor.fetchall()
+        for record in records:
+            print(record)
         print("total spent :",item_total)
         print(essential_list,item_total)
         return essential_list,item_total
