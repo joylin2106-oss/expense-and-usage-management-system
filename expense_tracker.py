@@ -111,6 +111,12 @@ def discretionary_tracker():
             }
         disc_total+= disc_amount
         disc_store.append(disc_usage)
+        cursor.execute("INSERT INTO discretionary_tracker(disc_date,disc_name,disc_amount) VALUES(%s,%s,%s)",(disc_date,disc_name,disc_amount))
+        connection.commit()
+        cursor.execute("SELECT*FROM discretionary_tracker")
+        records = cursor.fetchall()
+        for record in records:
+            print(record)
         print(disc_store)
         print("Total spent: ",disc_total)
         return disc_total,disc_store
